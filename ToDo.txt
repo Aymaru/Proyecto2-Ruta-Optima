@@ -1,0 +1,21 @@
+Valores de los nodos distancia, estado de carretera, peligrosidad
+
+indice del componente = valor real - valor minimo / valor maximo - valor minimo
+
+Propuesta para el calculo del costo entre nodos del problema.
+
+Indice de distancia = ID
+
+Indice de estado de carretera = IEC 10-1
+
+Indice de peligrosidad = IP 5-1
+
+Costo de transito de nodos:
+
+CTN = 1/3 * ID + 1/3 * IEC + 1/3 * IP
+
+    Ejemplo Pittesti
+
+    7,2 97          6,4 138         8,1 101
+       V               C               B
+    
