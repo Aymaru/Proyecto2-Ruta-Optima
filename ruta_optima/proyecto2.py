@@ -1,82 +1,38 @@
-import cargador as mapa
+﻿import cargador as cargador
 import config as cons
-
-class Nodo():
-    """Una clase de nodo para A * Pathfinding"""
-
-    def __init__(self, actual=None, padre=None):
-        self.padre = padre
-        self.actual = actual
-
-        self.g = 0  #  costo de la ruta desde el NODO_INICIO hasta NODO_ACTUAL (acumulado)
-        self.h = 0  #  función heurística que estima el costo de la ruta más óptima desde NODO_INICIO hasta NODO_META
-        self.f = 0  #  función de evaluación
-
-    def __eq__(self, other):
-        return self.actual == other.actual
-
-peso_ID = 1/6
-peso_IEC = 1/6
-peso_IP = 2/3
-
-valores_heuristica = {
-"Arad":366,
-"Bucarest":0,
-"Craiova":160,
-"Dobreta":242,
-"Eforie":161,
-"Fagaras":176,
-"Giorgiu":77,
-"Hirsova":151,
-"Iasi":256,
-"Lugoj":244,
-"Mehadia":241,
-"Neamt":264,
-"Oradea":380,
-"Pitesti":100,
-"Rimnicu Vilcea":193,
-"Sibiu":253,
-"Timisoara":329,
-"Urziceni":80,
-"Vaslui":199,
-"Zerind":374 }
+import nodo as n
 
 def calcular_indicador(actual,maximo,minimo):
     return (actual-minimo) / (maximo-minimo)
 
 def IP(actual): ##Calcula el indicador de peligrosidad
-    return calcular_indicador(actual,1,5)
+    return calcular_indicador(actual,cons.PELIGROSIDAD_MIN,cons.PELIGROSIDAD_MAX)
     
 def IEC(actual): ##Calcula el indicador de estado de la carretera
-    return calcular_indicador(actual,10,1)
+    return calcular_indicador(actual,cons.ESTADO_CARRETA_MAX,cons.ESTADO_CARRETA_MIN)
 
 def ID(actual): ##Calcula el indicador de Distancia
-    return calcular_indicador(actual,380,0)
+    return calcular_indicador(actual,cons.DISTANCIA_LINEAL_MAX,cons.DISTANCIA_LINEAL_MIN)
 
 def calcular_costo(grafo,actual,siguiente):
     CID = ID(grafo[actual][siguiente]["distancia"])
     CIEC = IEC(grafo[actual][siguiente]["estado_de_carretera"])
     CIP = IP(grafo[actual][siguiente]["peligrosidad"])
-    return peso_ID * CID + peso_IEC * CIEC + peso_IP * CIP
+    return cons.PESO_ID * CID + cons.PESO_IEC * CIEC + cons.PESO_IP * CIP
 
 def calcular_heuristica(actual):
-    CID = ID(valores_heuristica[actual])
-    CIEC = IEC(10)
-    CIP = IP(1)
-    return peso_ID * CID + peso_IEC * CIEC + peso_IP * CIP
-
-def main():
-    camino_optimo = a_estrella(mapa.grafo_rumania,cons.NODO_INICIO,cons.NODO_META)
-    print(camino_optimo)
-
+    CID = ID(cons.VALORES_HEURISTICA[actual])
+    CIEC = IEC(cons.ESTADO_CARRETA_MAX)
+    CIP = IP(cons.PELIGROSIDAD_MIN)
+    return cons.PESO_ID * CID + cons.PESO_IEC * CIEC + cons.PESO_IP * CIP
 
 def a_estrella(grafo,inicial,destino):
     
-    nodo_inicial = Nodo(inicial)
-    nodo_destino = Nodo(destino)
+    nodo_inicial = n.Nodo(inicial)
+    nodo_destino = n.Nodo(destino)
 
-    lista_abiertos = []
-    lista_cerrados = []
+    lista_abiertos = []  # nodos por evaluar
+    lista_cerrados = []  # nodos ya evaluados
 
     # Agregar nodo inicial
     lista_abiertos.append(nodo_inicial)
@@ -108,7 +64,7 @@ def a_estrella(grafo,inicial,destino):
         # Generar hijos
         lista_hijos = []
         for vecino in list(grafo.adj[nodo_actual.actual]):
-            hijo = Nodo(vecino,nodo_actual)
+            hijo = n.Nodo(vecino,nodo_actual)
             lista_hijos.append(hijo)
 
         # Recorre los hijos
@@ -127,6 +83,10 @@ def a_estrella(grafo,inicial,destino):
                     continue
             
             lista_abiertos.append(hijo)
+
+def main():
+    camino_optimo = a_estrella(cargador.grafo_rumania,cons.NODO_INICIO,cons.NODO_META)
+    print(camino_optimo)
 
 if __name__ == '__main__':
     main()
