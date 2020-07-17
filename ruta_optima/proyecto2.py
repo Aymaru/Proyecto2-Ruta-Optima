@@ -15,6 +15,10 @@ class Nodo():
     def __eq__(self, other):
         return self.actual == other.actual
 
+peso_ID = 1/6
+peso_IEC = 1/6
+peso_IP = 2/3
+
 valores_heuristica = {
 "Arad":366,
 "Bucarest":0,
@@ -53,13 +57,13 @@ def calcular_costo(grafo,actual,siguiente):
     CID = ID(grafo[actual][siguiente]["distancia"])
     CIEC = IEC(grafo[actual][siguiente]["estado_de_carretera"])
     CIP = IP(grafo[actual][siguiente]["peligrosidad"])
-    return (1/3) * CID + (1/3) * CIEC + (1/3) * CIP
+    return peso_ID * CID + peso_IEC * CIEC + peso_IP * CIP
 
 def calcular_heuristica(actual):
     CID = ID(valores_heuristica[actual])
     CIEC = IEC(10)
     CIP = IP(1)
-    return (2/6) * CID + (1/6) * CIEC + (3/6) * CIP
+    return peso_ID * CID + peso_IEC * CIEC + peso_IP * CIP
 
 def main():
     camino_optimo = a_estrella(mapa.grafo_rumania,cons.NODO_INICIO,cons.NODO_META)
@@ -91,7 +95,7 @@ def a_estrella(grafo,inicial,destino):
         # Se saca el actual de la lista de abiertos y se agrega a la lista de cerrados
         lista_abiertos.pop(indice_actual)
         lista_cerrados.append(nodo_actual)
-        print("procesando nodo actual g:%f h:%f f:%f" % (nodo_actual.g,nodo_actual.h,nodo_actual.f))
+        
         # Se verifica si se llego al destino
         if nodo_actual == nodo_destino:
             camino = []
@@ -117,9 +121,6 @@ def a_estrella(grafo,inicial,destino):
             hijo.g = nodo_actual.g + calcular_costo(grafo,nodo_actual.actual,hijo.actual)
             hijo.h = calcular_heuristica(hijo.actual)
             hijo.f = hijo.g + hijo.h
-            # hijo.g = nodo_actual.g + ID(grafo.adj[nodo_actual.actual][hijo.actual]["distancia"]) #calculamos g
-            # hijo.h = valores_heuristica[nodo_actual.actual] #calculamos h
-            # hijo.f = hijo.g + hijo.h #calculamos f
 
             for nodo_abierto in lista_abiertos:
                 if hijo == nodo_abierto and hijo.g > nodo_abierto.g:
